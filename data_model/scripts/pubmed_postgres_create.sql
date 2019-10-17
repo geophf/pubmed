@@ -15,6 +15,19 @@ CREATE TABLE "data_load" (
 
 CREATE INDEX data_load_downloaded_ind_idx ON data_load (downloaded_ind);
 
+DROP TABLE IF EXISTS "abstract_stg";
+
+CREATE TABLE "abstract_stg" (
+	"id" serial NOT NULL,
+	"packet_id" integer NOT NULL,
+	"raw_xml" TEXT NOT NULL,
+	"parsed_ind" integer NOT NULL,
+	"parsed_dttm" TIMESTAMP,
+	CONSTRAINT "abstract_stg_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
 -- LOOKUP TABLES -------------------------------------------------------------
 
 CREATE TABLE "duality_lk" (
