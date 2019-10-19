@@ -3,7 +3,9 @@
 Filenames are stored in data_load table.
 
 1. we extract the next packet to process from data_load were downloaded_ind
-is the false dual.
+is the false dual. Done.
+
+2. we download the gz-compressed archive file from the pubmed FTP site.
 
 Downloading process is pubmed_gz_downloader which downloads file f from the
 pubmed ftp site and decompresses it as an (XML) string.
