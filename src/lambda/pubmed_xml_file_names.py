@@ -1,10 +1,28 @@
 import json
 
-def lambda_handler(event, context):
+'''
+Creates the list of filenames on the FTP server by eyeballing it.
+
+One could also ftplib and LIST the contents, as well. This is simpler.
+
+usage:
+
+$ python pubmed_xml_file_names.py > pubmed_filenames.csv 
+
+then from psql:
+
+$ psql -h [db url] -d [database] -U [user]
+
+[database] => \copy data_load(packet_name,downloaded_ind) from 'pubmed_filenames.csv' delimiter ',' CSV
+'''
+
+def handler(event, context):
     prefix='pubmed19n'
     postfix='.xml.gz,2'
-    x = 1
-    while x < 973:
+    stop = event.get('stop') or 1525
+    start = event.get('start') or 973
+    x = start
+    while x < stop + 1:
         print(prefix + numba(x) + postfix)
         x = x + 1
     return {
@@ -23,4 +41,4 @@ def numba(n):
     return ans
 
 if __name__=='__main__':
-    lambda_handler(None, None)
+    handler({ }, None)
