@@ -18,3 +18,8 @@ true dual and set the downloaded_dttm to now in the data_load table at the
 packet id.
 
 Voilà
+
+### ... and then
+
+After we have one packet processed, add a notification loop to process the
+next packet.
