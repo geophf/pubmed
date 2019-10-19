@@ -22,7 +22,7 @@ def scan_file(file):
       for art in root.iter('PubmedArticle'):
          arts = arts + 1
       print('There are',arts)
-      return root
+      return { 'abstracts': arts }
 
 if __name__ == '__main__':
    evt = { }

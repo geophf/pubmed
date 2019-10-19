@@ -1,6 +1,8 @@
 from common.db import with_db_connection
 from deployments.environment import db
 
+from pubmed_gz_downloader import download_and_scan_packet
+
 def handler(event, context):
    return with_db_connection(db, process_packet)
 
@@ -23,4 +25,5 @@ def due_process(cursor):
    pn = row[1]
    id = row[0]
    print('processing packet',pn,'id:',id)
-   return { pn : id }
+   scanned = download_and_scan_packet(pn)
+   return { pn : id, 'scanned': scanned }
