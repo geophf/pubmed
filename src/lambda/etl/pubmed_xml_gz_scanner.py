@@ -13,16 +13,17 @@ def handler(event,context):
       print('no filename to scan')
 
 def scan_file(file):
-      root = ET.fromstring(file)
-      # root = tree.getroot()
+   print('coverting file to xml')
+   root = ET.fromstring(file)
+   # root = tree.getroot()
 
-      print(root.tag)
-      print(root.attrib)
-      arts = 0
-      for art in root.iter('PubmedArticle'):
-         arts = arts + 1
-      print('There are',arts)
-      return { 'abstracts': arts }
+   print(root.tag)
+   print(root.attrib)
+   arts = 0
+   for art in root.iter('PubmedArticle'):
+      arts = arts + 1
+   print('There are',arts)
+   return { 'abstracts': arts }
 
 if __name__ == '__main__':
    evt = { }
