@@ -14,7 +14,7 @@ FROM data_load
 WHERE downloaded_ind=%s
 LIMIT 1'''
 
-   cursor.execute(da_sql,yn_lk['N'])
+   cursor.execute(da_sql,(yn_lk['N'],))
    ans = { 'result': 'no packets to process' }
    if cursor.rowcount > 0:
       ans = due_process(cursor,yn_lk)
