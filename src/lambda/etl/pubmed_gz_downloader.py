@@ -1,6 +1,5 @@
 import gzip
 from ftplib import FTP
-# import StringIO
 import io
 
 from pubmed_xml_gz_scanner import scan_file
@@ -16,7 +15,7 @@ def handler(event,context):
 def handle_binary(more_data):
     sio.write(more_data)
 
-def download_and_scan_packet(packet):
+def download_and_scan_packet(cursor,pack_id,packet,yn_lk):
    print('Downloading',packet,'from',ftp_url)
    ftp = FTP(ftp_url)
    ftp.login() # Username: anonymous password: anonymous@
@@ -29,15 +28,11 @@ def download_and_scan_packet(packet):
    print('Unzipped')
    uncompressed = zippy.read()
    print('read')
-   return scan_file(uncompressed)
-
-'''
-   url = ftp_url + packet
-   response = requests.get(url)
-   compressed_file = io.BytesIO(response.read())
-   decompressed_file = gzip.GzipFile(fileobj=compressed_file)
-   some_more = decompressed_file.read()
-'''
+   ans = scan_file(cursor,pack_id,uncompressed,yn_lk)
+   
+   # now let's clear out the io-cache for our next run-thru
+   sio = io.BytesIO()
+   return ans
 
 if __name__== '__main__':
    evt = { }
