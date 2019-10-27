@@ -1,6 +1,5 @@
 import gzip
 import xml.etree.ElementTree as ET
-import json
 
 # reads in a compressed XML file for storage in DB
 
@@ -14,7 +13,7 @@ def handler(event,context):
       print('no filename to scan')
 
 def scan_file(cursor,pack_id,file,yn_lk):
-   print('coverting file to xml')
+   print('converting file to xml')
    root = ET.fromstring(file)
 
    # print(root.tag) # prints PubmedArticleSet
@@ -34,7 +33,7 @@ INSERT INTO abstract_stg (packet_id,raw_xml,parsed_ind)
 VALUES (%s,%s,%s)
 RETURNING id
 '''
-   xml_to_store = json.dumps(art)
+   xml_to_store = ET.dump(art)
    cursor.execute(stmt,(pack_id,xml_to_store,yn_lk['N']))
 
 
