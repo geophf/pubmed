@@ -30,8 +30,7 @@ def download_and_scan_packet(cursor,pack_id,packet,yn_lk):
    print('read')
    ans = scan_file(cursor,pack_id,uncompressed,yn_lk)
    
-   # now let's clear out the io-cache for our next run-thru
-   sio = io.BytesIO()
+   # TODO: now let's clear out the io-cache for our next run-thru
    return ans
 
 if __name__== '__main__':
