@@ -8,7 +8,6 @@ def handler(event,context):
    filename = event.get('filename')
    if filename:
       print('For file',filename)
-      # input = gzip.open(filename, 'r')
       zippy = gzip.GzipFile(filename)
       zappy = zippy.read()
       scan_file(None,1,zappy,None)
@@ -18,22 +17,17 @@ def handler(event,context):
 def scan_file(cursor,pack_id,strg,yn_lk):
    print('converting file to xml')
    print('length of file is',len(strg))
-   # root = etree.fromstring(strg)
 
-   # print(root.tag) # prints PubmedArticleSet
-   # print(root.attrib) # prints {}
    arts = 0
    str1 = BytesIO(strg)
    conn = cursor.connection
    print('number of abstracts:',arts)
    for _,art in etree.iterparse(str1, tag='PubmedArticle'):
       arts = arts + 1
-      print('I am storing abstract')
       store_art_xml(cursor,pack_id,art,yn_lk)
       if arts % 500 == 0:
          print('Stored',arts,'articles')
          conn.commit()
-      print('I am clearing abstract')
       art.clear()
    print('There are',arts)
    return { 'abstracts': arts }
@@ -45,7 +39,6 @@ VALUES (%s,%s,%s)
 RETURNING id
 '''
    xml_to_store = etree.tostring(art).decode('utf-8')
-   print('converted abstract to xml')
    cursor.execute(stmt,(pack_id,xml_to_store,yn_lk['N']))
 
 if __name__ == '__main__':
