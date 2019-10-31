@@ -28,9 +28,13 @@ def download_and_scan_packet(cursor,pack_id,packet,yn_lk):
    print('Unzipped')
    uncompressed = zippy.read()
    print('read')
+
+   print('The first 100 or so characters of',packet,'are',uncompressed[0:100])
    ans = scan_file(cursor,pack_id,uncompressed,yn_lk)
    
-   # TODO: now let's clear out the io-cache for our next run-thru
+   # now let's clear out the io-cache for our next run-thru
+   sio.truncate(0)
+   sio.seek(0)
    return ans
 
 if __name__== '__main__':

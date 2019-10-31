@@ -25,7 +25,7 @@ def scan_file(cursor,pack_id,strg,yn_lk):
    for _,art in etree.iterparse(str1, tag='PubmedArticle'):
       arts = arts + 1
       store_art_xml(cursor,pack_id,art,yn_lk)
-      if arts % 500 == 0:
+      if arts % 2500 == 0:
          print('Stored',arts,'articles')
          conn.commit()
       art.clear()
