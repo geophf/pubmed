@@ -1,3 +1,7 @@
+# resource descriptors for the dev environment
+
+region='us-east-1'
+
 dbms='pubmed.ccmecrgmafql.us-east-1.rds.amazonaws.com'
 db_name='pubmed'
 
