@@ -23,6 +23,7 @@ CREATE TABLE "abstract_stg" (
 	"raw_xml" TEXT NOT NULL,
 	"parsed_ind" integer NOT NULL,
 	"parsed_dttm" TIMESTAMP,
+	"parsing_error" TEXT NULL,
 	CONSTRAINT "abstract_stg_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -31,36 +32,28 @@ CREATE TABLE "abstract_stg" (
 -- NEW TABLES FOR PUBMED ARTICLE ABSTRACTS -----------------------------------
 
 
+DROP TABLE IF EXISTS "pubmed_article";
+
 CREATE TABLE "pubmed_article" (
 	"id" serial NOT NULL,
 	"abstract_stg_id" integer NOT NULL,
-	"publication_status_ind" integer NOT NULL,
-	"pmid" integer NOT NULL,
-	"date_revised" DATE NOT NULL,
-	"citation_ind" integer NOT NULL,
+	"publication_status_ind" integer NULL,
+	"pmid" integer NULL,
+	"date_revised" DATE NULL,
+	"citation_ind" integer NULL,
 	"article_title" TEXT NOT NULL,
-	"e_location_id" integer NOT NULL,
+	"e_location_id" integer NULL,
 	"abstract_text" TEXT NOT NULL,
-	"language_ind" integer NOT NULL,
-	"nlm_unique_id" integer NOT NULL,
-	"medline_journal_info_ind" integer NOT NULL,
-	"keyword_list_owner_ind" integer NOT NULL,
+	"language_ind" integer NULL,
+	"nlm_unique_id" integer NULL,
+	"medline_journal_info_ind" integer NULL,
+	"keyword_list_owner_ind" integer NULL,
 	CONSTRAINT "pubmed_article_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
 
-
-
-CREATE TABLE "article_id_lk" (
-	"id" serial NOT NULL,
-	"kind" TEXT NOT NULL,
-	CONSTRAINT "article_id_lk_pk" PRIMARY KEY ("id")
-) WITH (
-  OIDS=FALSE
-);
-
-
+DROP TABLE IF EXISTS "article_id";
 
 CREATE TABLE "article_id" (
 	"id" serial NOT NULL,
@@ -71,7 +64,7 @@ CREATE TABLE "article_id" (
   OIDS=FALSE
 );
 
-
+DROP TABLE IF EXISTS "pubmed_article_article_id";
 
 CREATE TABLE "pubmed_article_article_id" (
 	"id" serial NOT NULL,
@@ -83,28 +76,7 @@ CREATE TABLE "pubmed_article_article_id" (
 );
 
 
-
-CREATE TABLE "publication_status_lk" (
-	"id" serial NOT NULL,
-	"status" serial NOT NULL,
-	CONSTRAINT "publication_status_lk_pk" PRIMARY KEY ("id")
-) WITH (
-  OIDS=FALSE
-);
-
-
-
-CREATE TABLE "journal_lk" (
-	"id" serial NOT NULL,
-	"issn" TEXT NOT NULL,
-	"title" TEXT NOT NULL,
-	"iso_abbrev" TEXT NOT NULL,
-	CONSTRAINT "journal_lk_pk" PRIMARY KEY ("id")
-) WITH (
-  OIDS=FALSE
-);
-
-
+DROP TABLE IF EXISTS "journal_issue";
 
 CREATE TABLE "journal_issue" (
 	"id" serial NOT NULL,
@@ -116,7 +88,7 @@ CREATE TABLE "journal_issue" (
   OIDS=FALSE
 );
 
-
+DROP TABLE IF EXISTS "journal";
 
 CREATE TABLE "journal" (
 	"id" serial NOT NULL,
@@ -127,17 +99,7 @@ CREATE TABLE "journal" (
   OIDS=FALSE
 );
 
-
-
-CREATE TABLE "affiliation_lk" (
-	"id" serial NOT NULL,
-	"affiliation" TEXT NOT NULL,
-	CONSTRAINT "affiliation_lk_pk" PRIMARY KEY ("id")
-) WITH (
-  OIDS=FALSE
-);
-
-
+DROP TABLE IF EXISTS "author";
 
 CREATE TABLE "author" (
 	"id" serial NOT NULL,
@@ -150,7 +112,7 @@ CREATE TABLE "author" (
   OIDS=FALSE
 );
 
-
+DROP TABLE IF EXISTS "author_affiliation";
 
 CREATE TABLE "author_affiliation" (
 	"id" serial NOT NULL,
@@ -161,7 +123,7 @@ CREATE TABLE "author_affiliation" (
   OIDS=FALSE
 );
 
-
+DROP TABLE IF EXISTS "pubmed_article_author";
 
 CREATE TABLE "pubmed_article_author" (
 	"id" serial NOT NULL,
@@ -172,6 +134,65 @@ CREATE TABLE "pubmed_article_author" (
   OIDS=FALSE
 );
 
+DROP TABLE IF EXISTS "pubmed_article_keyword";
+
+CREATE TABLE "pubmed_article_keyword" (
+	"id" serial NOT NULL,
+	"pubmed_article_id" integer NOT NULL,
+	"keyword_ind" integer NOT NULL,
+	"major_topic_ind" integer NOT NULL,
+	CONSTRAINT "pubmed_article_keyword_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+
+-- LOOKUP TABLES -------------------------------------------------------------
+
+CREATE TABLE "duality_lk" (
+	"id" serial NOT NULL,
+	"truth_serum" TEXT NOT NULL,
+	CONSTRAINT "duality_lk_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+INSERT INTO duality_lk (id,truth_serum)
+VALUES (1,'Y'), (2,'N');
+
+CREATE TABLE "article_id_lk" (
+	"id" serial NOT NULL,
+	"kind" TEXT NOT NULL,
+	CONSTRAINT "article_id_lk_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE "publication_status_lk" (
+	"id" serial NOT NULL,
+	"status" serial NOT NULL,
+	CONSTRAINT "publication_status_lk_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE "journal_lk" (
+	"id" serial NOT NULL,
+	"issn" TEXT NOT NULL,
+	"title" TEXT NOT NULL,
+	"iso_abbrev" TEXT NOT NULL,
+	CONSTRAINT "journal_lk_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+CREATE TABLE "affiliation_lk" (
+	"id" serial NOT NULL,
+	"affiliation" TEXT NOT NULL,
+	CONSTRAINT "affiliation_lk_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
 
 
 CREATE TABLE "language_lk" (
@@ -222,29 +243,3 @@ CREATE TABLE "keyword_lk" (
 ) WITH (
   OIDS=FALSE
 );
-
-
-
-CREATE TABLE "pubmed_article_keyword" (
-	"id" serial NOT NULL,
-	"pubmed_article_id" integer NOT NULL,
-	"keyword_ind" integer NOT NULL,
-	"major_topic_ind" integer NOT NULL,
-	CONSTRAINT "pubmed_article_keyword_pk" PRIMARY KEY ("id")
-) WITH (
-  OIDS=FALSE
-);
-
-
--- LOOKUP TABLES -------------------------------------------------------------
-
-CREATE TABLE "duality_lk" (
-	"id" serial NOT NULL,
-	"truth_serum" TEXT NOT NULL,
-	CONSTRAINT "duality_lk_pk" PRIMARY KEY ("id")
-) WITH (
-  OIDS=FALSE
-);
-
-INSERT INTO duality_lk (id,truth_serum)
-VALUES (1,'Y'), (2,'N');
