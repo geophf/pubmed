@@ -1,3 +1,20 @@
+
+-- XML MAPPING ---------------------------------------------------------------
+
+DROP TABLE IF EXISTS "xml_element_map";
+
+CREATE TABLE "xml_element_map" (
+	"id" serial NOT NULL,
+	"xpath" TEXT NOT NULL,
+	"table" TEXT NOT NULL,
+	"column" TEXT NOT NULL,
+	CONSTRAINT "xml_element_map_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+-- ETL and STAGING TABLES ----------------------------------------------------
+
 DROP TABLE IF EXISTS "data_load";
 DROP INDEX IF EXISTS "data_load_downloaded_ind_idx";
 
@@ -31,7 +48,6 @@ CREATE TABLE "abstract_stg" (
 
 -- NEW TABLES FOR PUBMED ARTICLE ABSTRACTS -----------------------------------
 
-
 DROP TABLE IF EXISTS "pubmed_article";
 
 CREATE TABLE "pubmed_article" (
@@ -39,15 +55,15 @@ CREATE TABLE "pubmed_article" (
 	"abstract_stg_id" integer NOT NULL,
 	"publication_status_ind" integer NULL,
 	"pmid" integer NULL,
-	"date_revised" DATE NULL,
+	"nlm_unique_id" integer NULL,
+	"e_location_id" integer NULL,
 	"citation_ind" integer NULL,
 	"article_title" TEXT NOT NULL,
-	"e_location_id" integer NULL,
 	"abstract_text" TEXT NOT NULL,
 	"language_ind" integer NULL,
-	"nlm_unique_id" integer NULL,
 	"medline_journal_info_ind" integer NULL,
 	"keyword_list_owner_ind" integer NULL,
+	"publish_dt" DATE NOT NULL,
 	CONSTRAINT "pubmed_article_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -75,6 +91,17 @@ CREATE TABLE "pubmed_article_article_id" (
   OIDS=FALSE
 );
 
+DROP TABLE IF EXISTS "pubmed_article_date";
+
+CREATE TABLE "pubmed_article_date" (
+	"id" serial NOT NULL,
+	"pubmed_article_id" integer NOT NULL,
+	"date_type_ind" integer NOT NULL,
+	"date_value" DATE NOT NULL,
+	CONSTRAINT "pubmed_article_date_id_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
 
 DROP TABLE IF EXISTS "journal_issue";
 
@@ -146,7 +173,6 @@ CREATE TABLE "pubmed_article_keyword" (
   OIDS=FALSE
 );
 
-
 -- LOOKUP TABLES -------------------------------------------------------------
 
 CREATE TABLE "duality_lk" (
@@ -160,9 +186,20 @@ CREATE TABLE "duality_lk" (
 INSERT INTO duality_lk (id,truth_serum)
 VALUES (1,'Y'), (2,'N');
 
+CREATE TABLE "date_type_lk" (
+	"id" serial NOT NULL,
+	"date_type" TEXT NOT NULL,
+	CONSTRAINT "date_type_lk_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+INSERT INTO date_type_lk (date_type) 
+VALUES ('COMPLETED'),('REVISED'),('PUBLISHED');
+
 CREATE TABLE "article_id_lk" (
 	"id" serial NOT NULL,
-	"kind" TEXT NOT NULL,
+	"id_kind" TEXT NOT NULL,
 	CONSTRAINT "article_id_lk_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
