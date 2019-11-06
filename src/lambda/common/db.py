@@ -63,14 +63,25 @@ def fetch_dictionary(cursor,column,table):
 
 # now we want to look up a value ... is it there?
 
-def lookup_or_add(cursor,table,val,dict):
+def lookup_or_add(cursor,table,col,val,dict):
     ans = dict.get(val)
     if not ans:
-        stmt='INSERT INTO ' + table + ' VALUES (%s) RETURNING id'
+        stmt='INSERT INTO ' + table + ' (' + col + ') VALUES (%s) RETURNING id'
         cursor.execute(stmt,(val,))
         ans = cursor.fetchone()[0]
         dict[val] = ans
-    return ans
+    return (ans,dict)
+
+def fetch_or_add(cursor,table,col,val):
+    lk = fetch_lookup_table(cursor,table)
+    return lookup_or_add(cursor,table,col,val,lk)
+
+def build_then_insert(cursor,table,kvs):
+    s0 = 'INSERT INTO ' + table + '('
+    cols = ','.join(kvs.keys())
+    stmt = s0 + cols + ') VALUES (%s) RETURNING id'
+    cursor.execute(stmt,(tuple(kvs.values()),))
+    return cursor.fetchone()[0]
 
 # pivot/join table 
 
