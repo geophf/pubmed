@@ -6,8 +6,10 @@ DROP TABLE IF EXISTS "xml_element_map";
 CREATE TABLE "xml_element_map" (
 	"id" serial NOT NULL,
 	"xpath" TEXT NOT NULL,
+        "xml_element" TEXT NOT NULL,
 	"table" TEXT NOT NULL,
 	"column" TEXT NOT NULL,
+        "processor" TEXT NOT NULL,
 	CONSTRAINT "xml_element_map_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
