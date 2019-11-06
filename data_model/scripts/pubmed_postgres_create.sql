@@ -209,7 +209,7 @@ CREATE TABLE "article_id_lk" (
 
 CREATE TABLE "publication_status_lk" (
 	"id" serial NOT NULL,
-	"status" serial NOT NULL,
+	"status" TEXT NOT NULL,
 	CONSTRAINT "publication_status_lk_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
