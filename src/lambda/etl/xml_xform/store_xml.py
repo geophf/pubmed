@@ -1,5 +1,7 @@
 import datetime
 
+from processors.util import text_processor, redirect, kv
+
 # stores the XML which we parsed
 
 from common.db import fetch_or_add
@@ -63,31 +65,8 @@ def pmid_processor(cursor,elt,vals):
 def nlm_id_processor(cursor,elt,vals):
    return text_processor(elt,'nlm_unique_id',vals)
 
-def text_processor(elt,col,vals):
-   return kv(col,vals,elt.text)
-
-def date_processor(elt,col,vals):
-   datemap = xlate_kids(elt)
-
-   def d(field):
-      return int(datemap[field])
-
-   dt = datetime.datetime(d('Year'),d('Month'),d('Day')).date()
-
-   # Ya see how I did that? FUNCTIONALS, BAYBEE! FUNCTIONALS!
-
-   return kv(col,vals,dt)
-
-# so, to get the publish date, we have to dig into the Aricle element
-# There are actually a lot of first-tier stuff in the article
-
 def article_processor(cursor,elt,vals):
    return redirect(cursor,elt,vals,'ELocationID',e_location_processor)
-
-def redirect(cursor,elt,vals,child,processor):
-   for ad in elt.findall(child):
-      vals = processor(cursor,ad,vals)
-   return vals
 
 def medical_journal_info_processor(cursor,elt,vals):
    return redirect(cursor,elt,vals,'NlmUniqueID',nlm_id_processor)
@@ -107,21 +86,3 @@ RETURNING id
    res = cursor.fetchone()[0]
    vals['e_location_id'] = res
    return vals
-
-def article_date_processor(cursor,elt,vals):
-   return date_processor(elt,'publish_dt',vals)
-
-def xlate_kids(elt):
-   ans = { }
-   for kid in elt:
-      ans[kid.tag] = kid.text
-   return ans
-
-def kv(col,vals,val):
-   vals[col] = val
-   return vals
-
-def simple_inserter(cursor,table,column,val):
-   stmt='INSERT INTO ' + table + ' (' + column + ') VALUES (%s) RETURNING id'
-   cursor.execute(stmt,(val,))
-   return cursor.fetchone()[0]
