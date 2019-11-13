@@ -59,7 +59,7 @@ CREATE TABLE "pubmed_article" (
 	"pmid" integer NULL,
 	"nlm_unique_id" integer NULL,
 	"e_location_id" integer NULL,
-	"citation_ind" integer NULL,
+	"journal_id" integer NULL,
 	"article_title" TEXT NOT NULL,
 	"abstract_text" TEXT NOT NULL,
 	"language_ind" integer NULL,
