@@ -1,13 +1,28 @@
+import datetime
+
 # stores the XML which we parsed
 
 from common.db import fetch_or_add
 
+'''
+A 'row' is a rather complicated affair because the XML hierarchical model does
+not match the relational model in the database, so, to store a row, we first
+have to populate the pubmed_article table, get the id from that row, that use
+that key to index off the join and auxiliary tables associated with that 
+abstract.
+
+This, then, ends up as a two-pass system ('compiler,' if you will): one pass
+through the XML to get the first-tier pubmed_article data, then the second
+pass through the same XML, but this time with the pubmed_article row id, to
+get the associated/auxiliary data.
+'''
+
 def store_row(cursor,row_id,skml,yn_lk):
    fns = load_processors(cursor)
-   vals = { }
+   vals = { 'abstract_stg_id' : row_id }
    print('Storing XML for row',row_id)
-   dispatcher(cursor,'MedlineCitation',fns,skml,vals)
-   dispatcher(cursor,'PubmedData',fns,skml,vals)
+   vals = dispatcher(cursor,'MedlineCitation',fns,skml,vals)
+   vals = dispatcher(cursor,'PubmedData',fns,skml,vals)
    print('My data model')
    for (k,v) in vals.items():
       print("\t",k,':',v)
@@ -45,8 +60,62 @@ def pub_status_processor(cursor,elt,vals):
 def pmid_processor(cursor,elt,vals):
    return text_processor(elt,'pmid',vals)
 
+def nlm_id_processor(cursor,elt,vals):
+   return text_processor(elt,'nlm_unique_id',vals)
+
 def text_processor(elt,col,vals):
    return kv(col,vals,elt.text)
+
+def date_processor(elt,col,vals):
+   datemap = xlate_kids(elt)
+
+   def d(field):
+      return int(datemap[field])
+
+   dt = datetime.datetime(d('Year'),d('Month'),d('Day')).date()
+
+   # Ya see how I did that? FUNCTIONALS, BAYBEE! FUNCTIONALS!
+
+   return kv(col,vals,dt)
+
+# so, to get the publish date, we have to dig into the Aricle element
+# There are actually a lot of first-tier stuff in the article
+
+def article_processor(cursor,elt,vals):
+   return redirect(cursor,elt,vals,'ELocationID',e_location_processor)
+
+def redirect(cursor,elt,vals,child,processor):
+   for ad in elt.findall(child):
+      vals = processor(cursor,ad,vals)
+   return vals
+
+def medical_journal_info_processor(cursor,elt,vals):
+   return redirect(cursor,elt,vals,'NlmUniqueID',nlm_id_processor)
+
+# whew! Lookup-table value (with possible insert) then keyed return!
+
+def e_location_processor(cursor,eloc,vals):
+   typ = eloc.attrib['EIdType']
+   e_id_type = fetch_or_add(cursor,'article_id_lk','id_kind',typ)
+   val = eloc.text
+   stmt='''
+INSERT INTO article_id (id_type,id_value)
+VALUES (%s,%s)
+RETURNING id
+'''
+   cursor.execute(stmt,(e_id_type,val))
+   res = cursor.fetchone()[0]
+   vals['e_location_id'] = res
+   return vals
+
+def article_date_processor(cursor,elt,vals):
+   return date_processor(elt,'publish_dt',vals)
+
+def xlate_kids(elt):
+   ans = { }
+   for kid in elt:
+      ans[kid.tag] = kid.text
+   return ans
 
 def kv(col,vals,val):
    vals[col] = val
