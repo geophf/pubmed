@@ -65,7 +65,6 @@ CREATE TABLE "pubmed_article" (
 	"language_ind" integer NULL,
 	"medline_journal_info_ind" integer NULL,
 	"keyword_list_owner_ind" integer NULL,
-	"publish_dt" DATE NOT NULL,
 	CONSTRAINT "pubmed_article_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
