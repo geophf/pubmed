@@ -74,7 +74,7 @@ def lookup_or_add(cursor,table,col,val,dict):
 
 def fetch_or_add(cursor,table,col,val):
     lk = fetch_lookup_table(cursor,table)
-    return lookup_or_add(cursor,table,col,val,lk)
+    return lookup_or_add(cursor,table,col,val,lk)[0]
 
 def build_then_insert(cursor,table,kvs):
     s0 = 'INSERT INTO ' + table + '('
