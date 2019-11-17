@@ -1,19 +1,42 @@
 
 -- XML MAPPING ---------------------------------------------------------------
 
+DROP TABLE IF EXISTS "xml_element";
+
+CREATE TABLE "xml_element" (
+	"id" serial NOT NULL,
+	"xpath" TEXT NOT NULL,
+	"xml_element" TEXT NOT NULL,
+	CONSTRAINT "xml_element_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+
 DROP TABLE IF EXISTS "xml_element_map";
 
 CREATE TABLE "xml_element_map" (
 	"id" serial NOT NULL,
-	"xpath" TEXT NOT NULL,
-        "xml_element" TEXT NOT NULL,
-	"table" TEXT NOT NULL,
-	"column" TEXT NOT NULL,
+        "xml_element_id" integer NOT NULL,
+	"table_nm" TEXT NOT NULL,
+	"column_nm" TEXT NOT NULL,
         "processor" TEXT NOT NULL,
 	CONSTRAINT "xml_element_map_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
+
+DROP TABLE IF EXISTS "not_mapped";
+
+CREATE TABLE "not_mapped" (
+	"id" serial NOT NULL,
+	"article_stg_id" integer NOT NULL,
+	"xml_element_id" integer NOT NULL,
+	CONSTRAINT "not_mapped_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
 
 -- ETL and STAGING TABLES ----------------------------------------------------
 
