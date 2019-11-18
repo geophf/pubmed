@@ -163,6 +163,8 @@ CREATE TABLE "author" (
   OIDS=FALSE
 );
 
+CREATE INDEX author_last_name_idx ON author (last_name);
+
 DROP TABLE IF EXISTS "author_affiliation";
 
 CREATE TABLE "author_affiliation" (
@@ -185,6 +187,8 @@ CREATE TABLE "pubmed_article_author" (
   OIDS=FALSE
 );
 
+CREATE INDEX pubmed_article_author_author_id_idx ON pubmed_article_author (author_id);
+
 DROP TABLE IF EXISTS "pubmed_article_keyword";
 
 CREATE TABLE "pubmed_article_keyword" (
@@ -196,6 +200,8 @@ CREATE TABLE "pubmed_article_keyword" (
 ) WITH (
   OIDS=FALSE
 );
+
+CREATE INDEX pubmed_article_keyword_keyword_ind_idx ON pubmed_article_keyword (keyword_ind);
 
 -- LOOKUP TABLES -------------------------------------------------------------
 
@@ -295,12 +301,13 @@ CREATE TABLE "country_lk" (
   OIDS=FALSE
 );
 
-
-
 CREATE TABLE "keyword_lk" (
 	"id" serial NOT NULL,
-	"keyword" serial NOT NULL,
+	"keyword" TEXT NOT NULL,
 	CONSTRAINT "keyword_lk_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
+
+CREATE INDEX keyword_lk_keyword_idx ON keyword_lk (keyword);
+

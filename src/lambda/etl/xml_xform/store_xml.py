@@ -44,7 +44,12 @@ def dispatcher(cursor,name,fns,skml,vals):
 
 def load_processors(cursor):
    fn_map = { }
-   stmt='SELECT xml_element,processor,"table","column" FROM xml_element_map'
+   stmt='''
+select a.xml_element,b.processor,b.table_nm,b.column_nm
+from xml_element a
+join xml_element_map b on b.xml_element_id=a.id
+'''
+
    cursor.execute(stmt)
    for row in cursor.fetchall():
       dic = { }
