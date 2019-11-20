@@ -65,7 +65,7 @@ INSERT INTO not_mapped (article_stg_id,xml_element_id) VALUES (%s,%s)
 def pub_status_processor(cursor,elt,vals):
    stat = elt.text
    pub_id = fetch_or_add(cursor,'publication_status_lk','status',stat)
-   return kv('publication_status_ind',vals,pub_id)
+   return kv('publication_status_id',vals,pub_id)
 
 def pmid_processor(cursor,elt,vals):
    return text_processor(elt,'pmid',vals)

@@ -78,16 +78,16 @@ DROP TABLE IF EXISTS "pubmed_article";
 CREATE TABLE "pubmed_article" (
 	"id" serial NOT NULL,
 	"abstract_stg_id" integer NOT NULL,
-	"publication_status_ind" integer NULL,
-	"pmid" integer NULL,
+	"publication_status_id" integer NULL,
+	"pmid" integer NOT NULL,
 	"nlm_unique_id" integer NULL,
 	"e_location_id" integer NULL,
 	"journal_id" integer NULL,
 	"article_title" TEXT NOT NULL,
 	"abstract_text" TEXT NOT NULL,
-	"language_ind" integer NULL,
-	"medline_journal_info_ind" integer NULL,
-	"keyword_list_owner_ind" integer NULL,
+	"language_id" integer NULL,
+	"medline_journal_info_id" integer NULL,
+	"keyword_list_owner_id" integer NULL,
 	CONSTRAINT "pubmed_article_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
