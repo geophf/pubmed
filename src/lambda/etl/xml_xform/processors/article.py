@@ -9,7 +9,7 @@ def article_processor(cursor,elt,vals):
       return redirect(cursor,elt,v,elt_nm,tagged_text_processor(col_nm))
 
    vals1 = redirector(vals,'ArticleTitle','article_title')
-   vals2 = redirector(vals1,'AbstractText','abstract_text')
+   vals2 = redirect(cursor,elt,vals1,'Abstract',abstract_processor)
    return redirect(cursor,elt,vals2,'ELocationID',e_location_processor)
 
 # whew! Lookup-table value (with possible insert) then keyed return!
@@ -28,12 +28,15 @@ RETURNING id
    vals['e_location_id'] = res
    return vals
 
-'''
-def title_processor(cursor,elt,vals):
-   return text_processor(elt,'article_title',vals)
-'''
-
 def tagged_text_processor(col_nm):
    def tagging_fn(cursor,elt,vals):
       return text_processor(elt,col_nm,vals)
    return tagging_fn
+
+# REEEEEE! abstract text is buried two elements deep! REEEE!
+
+def abstract_processor(cursor,elt,vals):
+   return redirect(cursor,elt,vals,'AbstractText',abstract_text_processor)
+
+def abstract_text_processor(cursor,elt,vals):
+   return text_processor(elt,'abstract_text',vals)

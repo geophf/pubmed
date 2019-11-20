@@ -3,8 +3,12 @@
 # this function says: 'For this child element, use this processor.' A redirect
 
 def redirect(cursor,elt,vals,child,processor):
+   found = False
    for ad in elt.findall(child):
       vals = processor(cursor,ad,vals)
+      found = True
+   if not found:
+      print('No child element',child,'found for',elt.tag)
    return vals
 
 # grabs and stores the content of an element

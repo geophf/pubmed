@@ -30,7 +30,7 @@ LIMIT 1
       row_xml = row[1]
       try:
          skml = parse_row(row_id,row_xml)
-         store_row(cursor,row_id,skml,yn_lk)
+         ans = store_row(cursor,row_id,skml,yn_lk)
          update_staging_table(cursor,row_id,yn_lk)
          ping_arn(parse_xml_arn)
       except Exception as err:

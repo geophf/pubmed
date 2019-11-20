@@ -29,9 +29,7 @@ def store_row(cursor,row_id,skml,yn_lk):
    xdict = fetch_xml_dict(cursor)
    (vals1,xd1) = dispatcher(cursor,'MedlineCitation',fns,skml,vals,path,row_id,xdict)
    (vals2,xd2) = dispatcher(cursor,'PubmedData',fns,skml,vals1,path,row_id,xd1)
-   print('My data model')
-   for (k,v) in vals2.items():
-      print("\t",k,':',v)
+   return vals2
 
 # dispatches to XML element processors for the children of this element
 
