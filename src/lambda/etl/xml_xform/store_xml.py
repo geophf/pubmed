@@ -1,6 +1,7 @@
 import datetime
 
 from processors.util import text_processor, redirect, kv
+from processors.db_util import fetch_xml_dict,lookup_xml_id,load_processors
 
 # stores the XML which we parsed
 
@@ -22,42 +23,45 @@ get the associated/auxiliary data.
 def store_row(cursor,row_id,skml,yn_lk):
    fns = load_processors(cursor)
    vals = { 'abstract_stg_id' : row_id }
+   path = '/PubmedArticle/'
    print('Storing XML for row',row_id)
-   vals = dispatcher(cursor,'MedlineCitation',fns,skml,vals)
-   vals = dispatcher(cursor,'PubmedData',fns,skml,vals)
+   xdict = fetch_xml_dict(cursor)
+   (vals1,xd1) = dispatcher(cursor,'MedlineCitation',fns,skml,vals,path,row_id,xdict)
+   (vals2,xd2) = dispatcher(cursor,'PubmedData',fns,skml,vals1,path,row_id,xd1)
    print('My data model')
-   for (k,v) in vals.items():
+   for (k,v) in vals2.items():
       print("\t",k,':',v)
 
-def dispatcher(cursor,name,fns,skml,vals):
+# dispatches to XML element processors for the children of this element
+
+def dispatcher(cursor,name,fns,skml,vals,path,art_id,xdict):
    print('scanning',name)
+   path1 = path + name + '/'
+   xd1 = xdict
    for elt in skml.findall(name):
       for e1 in elt:
          tg = e1.tag
+         path2 = path1 + tg + '/'
          f = fns.get(tg)
          if f:
             print('for',tg,'I get',f)
             vals = globals()[f['processor']](cursor,e1,vals)
          else:
-            print('I have no dispatch for',tg)
-   return vals
+            xd1 = log_no_processor(cursor,path1,tg,art_id,xd1)
+   return (vals,xd1)
 
-def load_processors(cursor):
-   fn_map = { }
+# if we don't have a processor for this element, log this in the database
+
+def log_no_processor(cursor,path1,tg,art_id,xdict):
+   print('Logging I have no dispatch for',tg)
+   (key,xd1) = lookup_xml_id(cursor,path1,tg,xdict)
    stmt='''
-select a.xml_element,b.processor,b.table_nm,b.column_nm
-from xml_element a
-join xml_element_map b on b.xml_element_id=a.id
+INSERT INTO not_mapped (article_stg_id,xml_element_id) VALUES (%s,%s)
 '''
+   cursor.execute(stmt,(art_id,key))
+   return xd1
 
-   cursor.execute(stmt)
-   for row in cursor.fetchall():
-      dic = { }
-      dic['processor'] = row[1]
-      dic['table'] = row[2]
-      dic['column'] = row[3]
-      fn_map[row[0]] = dic
-   return fn_map
+# ----- PROCESSORS ------------------------------------------------------------
 
 def pub_status_processor(cursor,elt,vals):
    stat = elt.text

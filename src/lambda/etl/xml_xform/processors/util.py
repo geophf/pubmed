@@ -51,10 +51,3 @@ def xlate_kids(elt):
    for kid in elt:
       ans[kid.tag] = kid.text
    return ans
-
-# A dictionary entry push into a lookup table
-
-def simple_inserter(cursor,table,column,val):
-   stmt='INSERT INTO ' + table + ' (' + column + ') VALUES (%s) RETURNING id'
-   cursor.execute(stmt,(val,))
-   return cursor.fetchone()[0]
