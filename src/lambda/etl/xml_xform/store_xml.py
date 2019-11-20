@@ -1,11 +1,12 @@
 import datetime
 
+from common.db import fetch_or_add
+
 from processors.util import text_processor, redirect, kv
 from processors.db_util import fetch_xml_dict,lookup_xml_id,load_processors
+from processors.article import article_processor
 
 # stores the XML which we parsed
-
-from common.db import fetch_or_add
 
 '''
 A 'row' is a rather complicated affair because the XML hierarchical model does
@@ -74,24 +75,5 @@ def pmid_processor(cursor,elt,vals):
 def nlm_id_processor(cursor,elt,vals):
    return text_processor(elt,'nlm_unique_id',vals)
 
-def article_processor(cursor,elt,vals):
-   return redirect(cursor,elt,vals,'ELocationID',e_location_processor)
-
 def medical_journal_info_processor(cursor,elt,vals):
    return redirect(cursor,elt,vals,'NlmUniqueID',nlm_id_processor)
-
-# whew! Lookup-table value (with possible insert) then keyed return!
-
-def e_location_processor(cursor,eloc,vals):
-   typ = eloc.attrib['EIdType']
-   e_id_type = fetch_or_add(cursor,'article_id_lk','id_kind',typ)
-   val = eloc.text
-   stmt='''
-INSERT INTO article_id (id_type,id_value)
-VALUES (%s,%s)
-RETURNING id
-'''
-   cursor.execute(stmt,(e_id_type,val))
-   res = cursor.fetchone()[0]
-   vals['e_location_id'] = res
-   return vals
