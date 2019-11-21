@@ -80,7 +80,6 @@ CREATE TABLE "pubmed_article" (
 	"abstract_stg_id" integer NOT NULL,
 	"publication_status_id" integer NULL,
 	"pmid" integer NOT NULL,
-	"nlm_unique_id" integer NULL,
 	"e_location_id" integer NULL,
 	"journal_id" integer NULL,
 	"article_title" TEXT NOT NULL,
@@ -261,7 +260,6 @@ CREATE TABLE "affiliation_lk" (
   OIDS=FALSE
 );
 
-
 CREATE TABLE "language_lk" (
 	"id" serial NOT NULL,
 	"language" TEXT NOT NULL,
@@ -269,8 +267,6 @@ CREATE TABLE "language_lk" (
 ) WITH (
   OIDS=FALSE
 );
-
-
 
 CREATE TABLE "keyword_list_owner_lk" (
 	"id" serial NOT NULL,
@@ -280,18 +276,17 @@ CREATE TABLE "keyword_list_owner_lk" (
   OIDS=FALSE
 );
 
-
+DROP TABLE IF EXISTS "medline_journal_info_lk";
 
 CREATE TABLE "medline_journal_info_lk" (
 	"id" serial NOT NULL,
-	"country_ind" integer NOT NULL,
-	"issn_linking" TEXT NOT NULL,
+	"nlm_unique_id" integer NULL,
+	"country_ind" integer NULL,
+	"issn_linking" TEXT NULL,
 	CONSTRAINT "medline_journal_info_lk_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
-
-
 
 CREATE TABLE "country_lk" (
 	"id" serial NOT NULL,
