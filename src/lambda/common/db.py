@@ -77,10 +77,12 @@ def fetch_or_add(cursor,table,col,val):
     return lookup_or_add(cursor,table,col,val,lk)[0]
 
 def build_then_insert(cursor,table,kvs):
-    s0 = 'INSERT INTO ' + table + '('
+    s0 = 'INSERT INTO ' + table + ' ('
     cols = ','.join(kvs.keys())
-    stmt = s0 + cols + ') VALUES (%s) RETURNING id'
-    cursor.execute(stmt,(tuple(kvs.values()),))
+    stmt = s0 + cols + ') VALUES %s RETURNING id'
+    tup = tuple(kvs.values())
+    print("Executing SQL statement\n",stmt,'with tuple',tup)
+    cursor.execute(stmt,(tup,))
     return cursor.fetchone()[0]
 
 # pivot/join table 
