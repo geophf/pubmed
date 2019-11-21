@@ -59,5 +59,10 @@ WHERE id=%s
 '''
    cursor.execute(stmt,(str_err,row_id))
 
+def print_truncated(dict):
+   print("Extracted XML data:")
+   for (k,v) in dict.items():
+      print("\t",k,':',str(v)[:50])
+
 if __name__=='__main__':
-   print(handler(None,None))
+   print_truncated(handler(None,None))
