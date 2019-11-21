@@ -300,6 +300,8 @@ CREATE TABLE "medline_journal_info_lk" (
   OIDS=FALSE
 );
 
+CREATE INDEX medline_journal_info_lk_nlm_unique_id_idx ON medline_journal_info_lk (nlm_unique_id);
+
 CREATE TABLE "country_lk" (
 	"id" serial NOT NULL,
 	"country" TEXT NOT NULL,
