@@ -11,10 +11,26 @@ def redirect(cursor,elt,vals,child,processor):
       print('No child element',child,'found for',elt.tag)
    return vals
 
+# The above redirects to an element for processing, but when you know the
+# process is just 'grab the text of this child element' you can sculp your
+# own redirector
+
+def redirector(cursor,elt,vals):
+   def rd(v,elt_nm,col_nm):
+      return redirect(cursor,elt,v,elt_nm,tagged_text_processor(col_nm))
+   return rd
+
 # grabs and stores the content of an element
 
 def text_processor(elt,col,vals):
    return kv(col,vals,elt.text)
+
+# and this one goes one further by varying on the data table's column name
+
+def tagged_text_processor(col_nm):
+   def tagging_fn(cursor,elt,vals):
+      return text_processor(elt,col_nm,vals)
+   return tagging_fn
 
 '''
 dates in pubmed abstracts are in this format:
