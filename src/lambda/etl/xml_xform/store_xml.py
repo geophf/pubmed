@@ -1,10 +1,12 @@
 import datetime
 
-from common.db import fetch_or_add
+from common.db import fetch_or_add,build_then_insert
 
 from processors.util import text_processor, redirect, kv
 from processors.db_util import fetch_xml_dict,lookup_xml_id,load_processors
+
 from processors.article import article_processor
+from processors.medline import medical_journal_info_processor
 
 # stores the XML which we parsed
 
@@ -29,6 +31,7 @@ def store_row(cursor,row_id,skml,yn_lk):
    xdict = fetch_xml_dict(cursor)
    (vals1,xd1) = dispatcher(cursor,'MedlineCitation',fns,skml,vals,path,row_id,xdict)
    (vals2,xd2) = dispatcher(cursor,'PubmedData',fns,skml,vals1,path,row_id,xd1)
+   pbmd_art_id = build_then_insert(cursor,'pubmed_article',vals2)
    return vals2
 
 # dispatches to XML element processors for the children of this element
@@ -69,9 +72,3 @@ def pub_status_processor(cursor,elt,vals):
 
 def pmid_processor(cursor,elt,vals):
    return text_processor(elt,'pmid',vals)
-
-def nlm_id_processor(cursor,elt,vals):
-   return text_processor(elt,'nlm_unique_id',vals)
-
-def medical_journal_info_processor(cursor,elt,vals):
-   return redirect(cursor,elt,vals,'NlmUniqueID',nlm_id_processor)

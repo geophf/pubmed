@@ -2,13 +2,12 @@
 
 from common.db import fetch_or_add
 
-from processors.util import text_processor, redirect
+from processors.util import text_processor,tagged_text_processor,redirect
+from processors.util import redirector
 
 def article_processor(cursor,elt,vals):
-   def redirector(v,elt_nm,col_nm):
-      return redirect(cursor,elt,v,elt_nm,tagged_text_processor(col_nm))
-
-   vals1 = redirector(vals,'ArticleTitle','article_title')
+   rd = redirector(cursor,elt,vals)
+   vals1 = rd(vals,'ArticleTitle','article_title')
    vals2 = redirect(cursor,elt,vals1,'Abstract',abstract_processor)
    return redirect(cursor,elt,vals2,'ELocationID',e_location_processor)
 
@@ -28,10 +27,21 @@ RETURNING id
    vals['e_location_id'] = res
    return vals
 
-def tagged_text_processor(col_nm):
-   def tagging_fn(cursor,elt,vals):
-      return text_processor(elt,col_nm,vals)
-   return tagging_fn
+'''
+
+# language_processor is like the e_location_processor, but simpler, thank
+# goodness!
+
+WRONG! There can be multiple languages for an article, so we have to stage2
+this
+
+def language_processor(cursor,lang,vals):
+   ell = lang.text
+   lang_id = fetch_or_add(cursor,'language_lk','language',ell)
+   print('Got',lang_id,'for language',ell)
+   vals['language_id'] = lang_id
+   return vals
+'''
 
 # REEEEEE! abstract text is buried two elements deep! REEEE!
 
