@@ -82,9 +82,8 @@ CREATE TABLE "pubmed_article" (
 	"pmid" integer NOT NULL,
 	"e_location_id" integer NULL,
 	"journal_id" integer NULL,
-	"article_title" TEXT NOT NULL,
-	"abstract_text" TEXT NOT NULL,
-	"language_id" integer NULL,
+	"article_title" TEXT NULL,
+	"abstract_text" TEXT NULL,
 	"medline_journal_info_id" integer NULL,
 	"keyword_list_owner_id" integer NULL,
 	CONSTRAINT "pubmed_article_pk" PRIMARY KEY ("id")
@@ -99,6 +98,45 @@ CREATE TABLE "article_id" (
 	"id_type" integer NOT NULL,
 	"id_value" TEXT NOT NULL,
 	CONSTRAINT "article_id_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+DROP TABLE IF EXISTS "journal";
+
+CREATE TABLE "journal" (
+	"id" serial NOT NULL,
+	"publication_ind" integer NOT NULL,
+	"issue_ind" integer NOT NULL,
+	CONSTRAINT "journal_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+DROP TABLE IF EXISTS "author";
+
+CREATE TABLE "author" (
+	"id" serial NOT NULL,
+	"valid_ind" integer NOT NULL,
+	"last_name" TEXT NOT NULL,
+	"fore_name" TEXT NOT NULL,
+	"initials" TEXT NOT NULL,
+	CONSTRAINT "author_pk" PRIMARY KEY ("id")
+) WITH (
+  OIDS=FALSE
+);
+
+CREATE INDEX author_last_name_idx ON author (last_name);
+
+-- JOIN TABLES ----------------------------------------------------------------
+
+DROP TABLE IF EXISTS "pubmed_article_language";
+
+CREATE TABLE "pubmed_article_language" (
+	"id" serial NOT NULL,
+	"pubmed_article_id" integer NOT NULL,
+	"language_id" integer NOT NULL,
+	CONSTRAINT "pubmed_article_language_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
@@ -137,32 +175,6 @@ CREATE TABLE "journal_issue" (
 ) WITH (
   OIDS=FALSE
 );
-
-DROP TABLE IF EXISTS "journal";
-
-CREATE TABLE "journal" (
-	"id" serial NOT NULL,
-	"publication_ind" integer NOT NULL,
-	"issue_ind" integer NOT NULL,
-	CONSTRAINT "journal_pk" PRIMARY KEY ("id")
-) WITH (
-  OIDS=FALSE
-);
-
-DROP TABLE IF EXISTS "author";
-
-CREATE TABLE "author" (
-	"id" serial NOT NULL,
-	"valid_ind" integer NOT NULL,
-	"last_name" TEXT NOT NULL,
-	"fore_name" TEXT NOT NULL,
-	"initials" TEXT NOT NULL,
-	CONSTRAINT "author_pk" PRIMARY KEY ("id")
-) WITH (
-  OIDS=FALSE
-);
-
-CREATE INDEX author_last_name_idx ON author (last_name);
 
 DROP TABLE IF EXISTS "author_affiliation";
 
