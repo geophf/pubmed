@@ -281,7 +281,7 @@ DROP TABLE IF EXISTS "medline_journal_info_lk";
 CREATE TABLE "medline_journal_info_lk" (
 	"id" serial NOT NULL,
 	"nlm_unique_id" integer NULL,
-	"country_ind" integer NULL,
+	"country_id" integer NULL,
 	"issn_linking" TEXT NULL,
 	CONSTRAINT "medline_journal_info_lk_pk" PRIMARY KEY ("id")
 ) WITH (
