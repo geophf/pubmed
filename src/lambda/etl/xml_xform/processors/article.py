@@ -2,8 +2,8 @@
 
 from common.db import fetch_or_add
 
-from processors.util import text_processor,tagged_text_processor,redirect
-from processors.util import redirector
+from processors.xml_util import text_processor,tagged_text_processor,redirect
+from processors.xml_util import redirector
 
 def article_processor(cursor,elt,vals):
    rd = redirector(cursor,elt,vals)

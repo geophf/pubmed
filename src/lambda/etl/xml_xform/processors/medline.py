@@ -8,8 +8,8 @@ id for storage in the pubmed_article table
 
 from common.db import fetch_or_add,build_then_insert
 
-from processors.util import text_processor,tagged_text_processor,redirect
-from processors.util import redirector
+from processors.xml_util import text_processor,tagged_text_processor,redirect
+from processors.xml_util import redirector
 
 def medical_journal_info_processor(cursor,elt,vals):
    rd = redirector(cursor,elt,vals)

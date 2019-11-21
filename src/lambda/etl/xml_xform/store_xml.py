@@ -2,7 +2,7 @@ import datetime
 
 from common.db import fetch_or_add,build_then_insert
 
-from processors.util import text_processor, redirect, kv
+from processors.xml_util import text_processor,redirect,kv
 from processors.db_util import fetch_xml_dict,lookup_xml_id,load_processors
 
 from processors.article import article_processor
