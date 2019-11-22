@@ -6,7 +6,7 @@ from processors.xml_util import text_processor,redirect,kv
 from processors.db_util import fetch_xml_dict,lookup_xml_id,load_processors
 
 from processors.article import article_processor
-from processors.medline import medical_journal_info_processor
+from processors.journal import medical_journal_info_processor
 
 # stores the XML which we parsed
 
@@ -24,6 +24,10 @@ get the associated/auxiliary data.
 '''
 
 def store_row(cursor,row_id,skml,yn_lk):
+   art_id = phase_i(cursor,row_id,skml,yn_lk)
+   return art_id
+
+def phase_i(cursor,row_id,skml,yn_lk):
    fns = load_processors(cursor)
    vals = { 'abstract_stg_id' : row_id }
    path = '/PubmedArticle/'
@@ -31,8 +35,7 @@ def store_row(cursor,row_id,skml,yn_lk):
    xdict = fetch_xml_dict(cursor)
    (vals1,xd1) = dispatcher(cursor,'MedlineCitation',fns,skml,vals,path,row_id,xdict)
    (vals2,xd2) = dispatcher(cursor,'PubmedData',fns,skml,vals1,path,row_id,xd1)
-   pbmd_art_id = build_then_insert(cursor,'pubmed_article',vals2)
-   return vals2
+   return build_then_insert(cursor,'pubmed_article',vals2)
 
 # dispatches to XML element processors for the children of this element
 

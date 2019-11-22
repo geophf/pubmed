@@ -12,6 +12,7 @@ CREATE TABLE "xml_element" (
   OIDS=FALSE
 );
 
+CREATE INDEX xml_element_xml_element_idx ON xml_element (xml_element);
 
 DROP TABLE IF EXISTS "xml_element_map";
 
@@ -37,6 +38,7 @@ CREATE TABLE "not_mapped" (
   OIDS=FALSE
 );
 
+CREATE INDEX not_mapped_xml_element_id_idx ON not_mapped (xml_element_id);
 
 -- ETL and STAGING TABLES ----------------------------------------------------
 
@@ -106,8 +108,8 @@ DROP TABLE IF EXISTS "journal";
 
 CREATE TABLE "journal" (
 	"id" serial NOT NULL,
-	"publication_ind" integer NOT NULL,
-	"issue_ind" integer NOT NULL,
+	"publication_id" integer NOT NULL,
+	"issue_id" integer NOT NULL,
 	CONSTRAINT "journal_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -168,13 +170,15 @@ DROP TABLE IF EXISTS "journal_issue";
 
 CREATE TABLE "journal_issue" (
 	"id" serial NOT NULL,
-	"volume" integer NOT NULL,
-	"issue" integer NOT NULL,
-	"pub_date" DATE NOT NULL,
+	"volume" integer NULL,
+	"issue" integer NULL,
+	"pub_date" DATE NULL,
 	CONSTRAINT "journal_issue_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
+
+CREATE INDEX journal_issue_volume_issue_idx ON journal_issue (volume,issue);
 
 DROP TABLE IF EXISTS "author_affiliation";
 
@@ -256,13 +260,15 @@ CREATE TABLE "publication_status_lk" (
 
 CREATE TABLE "journal_lk" (
 	"id" serial NOT NULL,
-	"issn" TEXT NOT NULL,
-	"title" TEXT NOT NULL,
-	"iso_abbrev" TEXT NOT NULL,
+	"issn" TEXT NULL,
+	"title" TEXT NULL,
+	"iso_abbrev" TEXT NULL,
 	CONSTRAINT "journal_lk_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
 );
+
+CREATE INDEX journal_lk_issn_idx ON journal_lk (issn);
 
 CREATE TABLE "affiliation_lk" (
 	"id" serial NOT NULL,
