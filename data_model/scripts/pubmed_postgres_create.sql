@@ -159,7 +159,7 @@ DROP TABLE IF EXISTS "pubmed_article_date";
 CREATE TABLE "pubmed_article_date" (
 	"id" serial NOT NULL,
 	"pubmed_article_id" integer NOT NULL,
-	"date_type_ind" integer NOT NULL,
+	"date_type_id" integer NOT NULL,
 	"date_value" DATE NOT NULL,
 	CONSTRAINT "pubmed_article_date_id_pk" PRIMARY KEY ("id")
 ) WITH (
